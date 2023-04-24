@@ -1,0 +1,33 @@
+version: '3.0'
+
+services:
+
+  nginx:
+    image: nginx
+    ports:
+      - "8080:80"
+    environment:
+      - VIRTUAL_HOST=site.local
+    depends_on:
+      - php
+      
+    volumes:
+      - ./app/docker/nginx/conf.d/default.nginx:/etc/nginx/conf.d/default.conf
+      - ./app/:/var/www/html/
+
+  php:
+    build:
+      context: ./app/docker/php
+    volumes:
+      - ./app/docker/php/php.ini:/usr/local/etc/php/php.ini
+      - ./app/:/var/www/html/
+
+
+  mysql:
+    image: mysql:5.7
+    volumes:
+      - ./app/docker/mysql/data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: restTask
+      
